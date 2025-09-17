@@ -24,7 +24,20 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  ResponsiveContainer, 
+  LineChart as RechartsLineChart, 
+  Line, 
+  PieChart as RechartsPieChart, 
+  Pie, 
+  Cell, 
+  AreaChart, 
+  Area 
+} from 'recharts';
 
 interface DashboardProps {
   userRole?: 'user' | 'admin';
@@ -313,7 +326,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
                 className="h-[250px]"
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
+                  <RechartsPieChart>
                     <Pie
                       data={departmentEfficiency}
                       cx="50%"
@@ -328,7 +341,7 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
                       ))}
                     </Pie>
                     <ChartTooltip content={<ChartTooltipContent />} />
-                  </PieChart>
+                  </RechartsPieChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </CardContent>
