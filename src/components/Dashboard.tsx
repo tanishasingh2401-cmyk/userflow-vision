@@ -11,12 +11,20 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  FileText,
+  PieChart as PieChartIcon,
+  LineChart as LineChartIcon,
+  Activity,
+  Target,
+  Zap
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 
 interface DashboardProps {
   userRole?: 'user' | 'admin';
@@ -51,6 +59,40 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
     { title: 'Security Audit Completed', time: '1 day ago', type: 'success' }
   ];
 
+  // Analytics data
+  const weeklyProgress = [
+    { day: 'Mon', progress: 65, tasks: 12 },
+    { day: 'Tue', progress: 68, tasks: 15 },
+    { day: 'Wed', progress: 72, tasks: 18 },
+    { day: 'Thu', progress: 75, tasks: 14 },
+    { day: 'Fri', progress: 78, tasks: 16 },
+    { day: 'Sat', progress: 80, tasks: 8 },
+    { day: 'Sun', progress: 82, tasks: 6 }
+  ];
+
+  const monthlyTrends = [
+    { month: 'Jan', completed: 45, planned: 50, efficiency: 90 },
+    { month: 'Feb', completed: 52, planned: 55, efficiency: 95 },
+    { month: 'Mar', completed: 58, planned: 60, efficiency: 97 },
+    { month: 'Apr', completed: 62, planned: 65, efficiency: 95 },
+    { month: 'May', completed: 68, planned: 70, efficiency: 97 },
+    { month: 'Jun', completed: 72, planned: 75, efficiency: 96 }
+  ];
+
+  const departmentEfficiency = [
+    { name: 'Engineering', value: 85, color: 'hsl(var(--chart-1))' },
+    { name: 'Design', value: 92, color: 'hsl(var(--chart-2))' },
+    { name: 'QA', value: 78, color: 'hsl(var(--chart-3))' },
+    { name: 'DevOps', value: 95, color: 'hsl(var(--chart-4))' }
+  ];
+
+  const performanceMetrics = [
+    { metric: 'Velocity', current: 85, target: 90, trend: '+5%' },
+    { metric: 'Quality', current: 92, target: 95, trend: '+3%' },
+    { metric: 'Efficiency', current: 88, target: 85, trend: '+8%' },
+    { metric: 'Delivery', current: 78, target: 80, trend: '+2%' }
+  ];
+
   const dashboardCards = [
     {
       title: 'Overview',
@@ -78,11 +120,27 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
     },
     {
       title: 'Reports',
-      icon: BarChart3,
+      icon: FileText,
       description: 'Detailed reports',
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       content: 'Generate and view detailed progress reports'
+    },
+    {
+      title: 'Analytics',
+      icon: PieChartIcon,
+      description: 'Performance analytics',
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50',
+      content: 'View detailed performance analytics and metrics'
+    },
+    {
+      title: 'Insights',
+      icon: Zap,
+      description: 'AI-powered insights',
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50',
+      content: 'Get AI-powered insights and recommendations'
     }
   ];
 
@@ -164,20 +222,20 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
         </Card>
 
         {/* Dashboard Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {dashboardCards.map((card, index) => {
             const IconComponent = card.icon;
             return (
               <Card 
                 key={index} 
-                className="dashboard-card hover-lift animate-fade-in-up cursor-pointer group"
+                className="dashboard-card hover-lift animate-fade-in-up cursor-pointer group transition-all duration-300 hover:shadow-2xl"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <CardHeader className="pb-3">
-                  <div className={`w-12 h-12 ${card.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className={`w-12 h-12 ${card.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
                     <IconComponent className={`h-6 w-6 ${card.color}`} />
                   </div>
-                  <CardTitle className="text-lg">{card.title}</CardTitle>
+                  <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{card.title}</CardTitle>
                   <p className="text-sm text-muted-foreground">{card.description}</p>
                 </CardHeader>
                 <CardContent>
@@ -187,6 +245,174 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
             );
           })}
         </div>
+
+        {/* Analytics & Trends Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Weekly Progress Trends */}
+          <Card className="dashboard-card hover-lift animate-fade-in-up">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <LineChartIcon className="h-5 w-5 text-blue-600" />
+                Weekly Progress Trends
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={{
+                  progress: {
+                    label: "Progress",
+                    color: "hsl(var(--chart-1))",
+                  },
+                  tasks: {
+                    label: "Tasks",
+                    color: "hsl(var(--chart-2))",
+                  },
+                }}
+                className="h-[250px]"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={weeklyProgress}>
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <Area
+                      type="monotone"
+                      dataKey="progress"
+                      stroke="hsl(var(--chart-1))"
+                      fill="hsl(var(--chart-1))"
+                      fillOpacity={0.3}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="tasks"
+                      stroke="hsl(var(--chart-2))"
+                      fill="hsl(var(--chart-2))"
+                      fillOpacity={0.3}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+
+          {/* Department Efficiency */}
+          <Card className="dashboard-card hover-lift animate-fade-in-up">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PieChartIcon className="h-5 w-5 text-green-600" />
+                Department Efficiency
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer
+                config={{
+                  efficiency: {
+                    label: "Efficiency",
+                  },
+                }}
+                className="h-[250px]"
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={departmentEfficiency}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, value }) => `${name}: ${value}%`}
+                    >
+                      {departmentEfficiency.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Monthly Performance Analytics */}
+        <Card className="dashboard-card hover-lift animate-fade-in-up">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-purple-600" />
+              Monthly Performance Analytics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={{
+                completed: {
+                  label: "Completed",
+                  color: "hsl(var(--chart-1))",
+                },
+                planned: {
+                  label: "Planned",
+                  color: "hsl(var(--chart-2))",
+                },
+                efficiency: {
+                  label: "Efficiency",
+                  color: "hsl(var(--chart-3))",
+                },
+              }}
+              className="h-[300px]"
+            >
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyTrends}>
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="completed" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="planned" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+
+        {/* Performance Metrics & Insights */}
+        <Card className="dashboard-card hover-lift animate-fade-in-up">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-red-600" />
+              Performance Metrics & Insights
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {performanceMetrics.map((metric, index) => (
+                <div key={index} className="glass-card p-4 rounded-lg group hover:scale-105 transition-transform duration-300">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-primary" />
+                      <span className="font-medium text-sm">{metric.metric}</span>
+                    </div>
+                    <Badge variant="outline" className="text-green-600 bg-green-50">
+                      {metric.trend}
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Current</span>
+                      <span className="font-bold">{metric.current}%</span>
+                    </div>
+                    <Progress value={metric.current} className="h-2" />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Target: {metric.target}%</span>
+                      <span className={metric.current >= metric.target ? 'text-green-600' : 'text-orange-600'}>
+                        {metric.current >= metric.target ? '✓ On Track' : '⚠ Below Target'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Department Overview */}
         <Card className="dashboard-card hover-lift animate-fade-in-up">
