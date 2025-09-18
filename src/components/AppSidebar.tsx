@@ -24,21 +24,6 @@ const sidebarItems = [
     icon: BarChart3,
   },
   {
-    title: 'Trends',
-    url: '/trends',
-    icon: TrendingUp,
-  },
-  {
-    title: 'Reports',
-    url: '/reports',
-    icon: FileText,
-  },
-  {
-    title: 'Performance',
-    url: '/performance',
-    icon: Target,
-  },
-  {
     title: 'Departments',
     url: '/departments',
     icon: Users,
