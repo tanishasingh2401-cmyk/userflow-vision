@@ -6,38 +6,17 @@ import {
   Filter, 
   ArrowUpDown, 
   RefreshCw, 
-  BarChart3,
   Users,
   Calendar,
   CheckCircle2,
   Clock,
   AlertTriangle,
-  FileText,
-  PieChart as PieChartIcon,
-  LineChart as LineChartIcon,
-  Activity,
-  Target,
-  Zap
+  Activity
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  ResponsiveContainer, 
-  LineChart as RechartsLineChart, 
-  Line, 
-  PieChart as RechartsPieChart, 
-  Pie, 
-  Cell, 
-  AreaChart, 
-  Area 
-} from 'recharts';
 
 interface DashboardProps {
   userRole?: 'user' | 'admin';
@@ -48,384 +27,227 @@ const Dashboard: React.FC<DashboardProps> = ({ userRole = 'user' }) => {
   const [lastSync] = useState(new Date().toLocaleString());
 
   // Mock data for progress tracking
-  const projectProgress = {
-    overall: 72,
-    phases: [
-      { name: 'Planning', progress: 100, status: 'completed' },
-      { name: 'Development', progress: 85, status: 'in-progress' },
-      { name: 'Testing', progress: 45, status: 'in-progress' },
-      { name: 'Deployment', progress: 0, status: 'pending' }
-    ]
-  };
-
-  const departments = [
-    { name: 'Engineering', progress: 78, members: 12, trend: '+5%' },
-    { name: 'Design', progress: 85, members: 8, trend: '+12%' },
-    { name: 'QA', progress: 65, members: 6, trend: '+3%' },
-    { name: 'DevOps', progress: 92, members: 4, trend: '+8%' }
-  ];
-
-  const recentUpdates = [
-    { title: 'API Integration Complete', time: '2 hours ago', type: 'success' },
-    { title: 'Design Review Pending', time: '4 hours ago', type: 'warning' },
-    { title: 'Database Migration Started', time: '6 hours ago', type: 'info' },
-    { title: 'Security Audit Completed', time: '1 day ago', type: 'success' }
-  ];
-
-  // Analytics data
-  const weeklyProgress = [
-    { day: 'Mon', progress: 65, tasks: 12 },
-    { day: 'Tue', progress: 68, tasks: 15 },
-    { day: 'Wed', progress: 72, tasks: 18 },
-    { day: 'Thu', progress: 75, tasks: 14 },
-    { day: 'Fri', progress: 78, tasks: 16 },
-    { day: 'Sat', progress: 80, tasks: 8 },
-    { day: 'Sun', progress: 82, tasks: 6 }
-  ];
-
-  const monthlyTrends = [
-    { month: 'Jan', completed: 45, planned: 50, efficiency: 90 },
-    { month: 'Feb', completed: 52, planned: 55, efficiency: 95 },
-    { month: 'Mar', completed: 58, planned: 60, efficiency: 97 },
-    { month: 'Apr', completed: 62, planned: 65, efficiency: 95 },
-    { month: 'May', completed: 68, planned: 70, efficiency: 97 },
-    { month: 'Jun', completed: 72, planned: 75, efficiency: 96 }
-  ];
-
-  const departmentEfficiency = [
-    { name: 'Engineering', value: 85, color: 'hsl(var(--chart-1))' },
-    { name: 'Design', value: 92, color: 'hsl(var(--chart-2))' },
-    { name: 'QA', value: 78, color: 'hsl(var(--chart-3))' },
-    { name: 'DevOps', value: 95, color: 'hsl(var(--chart-4))' }
-  ];
-
-  const performanceMetrics = [
-    { metric: 'Velocity', current: 85, target: 90, trend: '+5%' },
-    { metric: 'Quality', current: 92, target: 95, trend: '+3%' },
-    { metric: 'Efficiency', current: 88, target: 85, trend: '+8%' },
-    { metric: 'Delivery', current: 78, target: 80, trend: '+2%' }
-  ];
-
-  const dashboardCards = [
+  const projects = [
     {
-      title: 'Overview',
-      icon: Eye,
-      description: 'Project status and metrics',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      content: 'View comprehensive project overview and key metrics'
+      id: 1,
+      name: 'Website Redesign',
+      progress: 85,
+      status: 'In Progress',
+      department: 'Design',
+      deadline: '2024-01-15',
+      assignedTo: 'John Doe',
+      priority: 'High',
+      tasksCompleted: 17,
+      totalTasks: 20
     },
     {
-      title: 'My Department',
-      icon: Building2,
-      description: 'Department-specific progress',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      content: 'Track your department\'s progress and milestones'
+      id: 2,
+      name: 'Mobile App Development',
+      progress: 60,
+      status: 'In Progress',
+      department: 'Development',
+      deadline: '2024-02-28',
+      assignedTo: 'Jane Smith',
+      priority: 'Medium',
+      tasksCompleted: 12,
+      totalTasks: 20
     },
     {
-      title: 'Trends',
-      icon: TrendingUp,
-      description: 'Analytics and trends',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      content: 'View performance trends and insights'
+      id: 3,
+      name: 'Marketing Campaign',
+      progress: 95,
+      status: 'Nearly Complete',
+      department: 'Marketing',
+      deadline: '2024-01-10',
+      assignedTo: 'Mike Johnson',
+      priority: 'High',
+      tasksCompleted: 19,
+      totalTasks: 20
     },
     {
-      title: 'Reports',
-      icon: FileText,
-      description: 'Detailed reports',
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      content: 'Generate and view detailed progress reports'
-    },
-    {
-      title: 'Analytics',
-      icon: PieChartIcon,
-      description: 'Performance analytics',
-      color: 'text-pink-600',
-      bgColor: 'bg-pink-50',
-      content: 'View detailed performance analytics and metrics'
-    },
-    {
-      title: 'Insights',
-      icon: Zap,
-      description: 'AI-powered insights',
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50',
-      content: 'Get AI-powered insights and recommendations'
+      id: 4,
+      name: 'Database Migration',
+      progress: 30,
+      status: 'Starting',
+      department: 'IT',
+      deadline: '2024-03-15',
+      assignedTo: 'Sarah Wilson',
+      priority: 'Low',
+      tasksCompleted: 6,
+      totalTasks: 20
     }
   ];
 
+  const departments = [
+    { name: 'Design', members: 8, progress: 88, trend: '+12%' },
+    { name: 'Development', members: 12, progress: 75, trend: '+8%' },
+    { name: 'Marketing', members: 6, progress: 92, trend: '+15%' },
+    { name: 'IT', members: 4, progress: 68, trend: '+5%' }
+  ];
+
+  const recentUpdates = [
+    { title: 'Website Redesign milestone completed', time: '2 hours ago', type: 'success' },
+    { title: 'New team member added to Development', time: '4 hours ago', type: 'info' },
+    { title: 'Marketing Campaign deadline approaching', time: '6 hours ago', type: 'warning' },
+    { title: 'Database Migration started', time: '1 day ago', type: 'info' }
+  ];
+
+  // Filter projects based on active filter
+  const filteredProjects = projects.filter(project => {
+    if (activeFilter === 'all') return true;
+    if (activeFilter === 'high') return project.priority === 'High';
+    if (activeFilter === 'inprogress') return project.status === 'In Progress';
+    if (activeFilter === 'completed') return project.progress === 100;
+    return true;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'In Progress': return 'bg-blue-500';
+      case 'Nearly Complete': return 'bg-green-500';
+      case 'Starting': return 'bg-yellow-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'High': return 'text-red-600 bg-red-50';
+      case 'Medium': return 'text-yellow-600 bg-yellow-50';
+      case 'Low': return 'text-green-600 bg-green-50';
+      default: return 'text-gray-600 bg-gray-50';
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-6">
-      {/* Header with Logo */}
-      <div className="flex justify-center mb-8">
-        <div className="glass-card px-8 py-4 rounded-2xl">
-          <h1 className="text-3xl font-bold gradient-text text-center">
-            ProjectTracker Pro
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+      <div className="space-y-8 animate-fade-in">
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Project Dashboard
           </h1>
-        </div>
-      </div>
-
-      {/* Main Dashboard Grid */}
-      <div className="max-w-7xl mx-auto space-y-6">
-        
-        {/* Action Bar */}
-        <div className="glass-card p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" className="hover-lift">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm" className="hover-lift">
-              <ArrowUpDown className="h-4 w-4 mr-2" />
-              Sort
-            </Button>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <RefreshCw className="h-4 w-4" />
-            Last sync: {lastSync}
-          </div>
-        </div>
-
-        {/* Progress Overview */}
-        <Card className="dashboard-card hover-lift animate-fade-in-up">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-blue-600" />
-              Project Progress Overview
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <div className="text-center">
-                <div className="text-4xl font-bold gradient-text mb-2">
-                  {projectProgress.overall}%
-                </div>
-                <p className="text-muted-foreground">Overall Progress</p>
-                <Progress value={projectProgress.overall} className="mt-4 h-3" />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {projectProgress.phases.map((phase, index) => (
-                  <div key={index} className="glass-card p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium">{phase.name}</span>
-                      <Badge 
-                        variant={
-                          phase.status === 'completed' ? 'default' :
-                          phase.status === 'in-progress' ? 'secondary' : 'outline'
-                        }
-                        className="text-xs"
-                      >
-                        {phase.status === 'completed' && <CheckCircle2 className="h-3 w-3 mr-1" />}
-                        {phase.status === 'in-progress' && <Clock className="h-3 w-3 mr-1" />}
-                        {phase.status === 'pending' && <AlertTriangle className="h-3 w-3 mr-1" />}
-                        {phase.status}
-                      </Badge>
-                    </div>
-                    <Progress value={phase.progress} className="h-2" />
-                    <p className="text-sm text-muted-foreground mt-1">{phase.progress}%</p>
-                  </div>
-                ))}
-              </div>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Real-time project transparency with complete visibility into progress, departments, and team performance
+          </p>
+          
+          {/* Action Bar */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+            <div className="flex items-center gap-2">
+              <Eye className="h-4 w-4 text-blue-600" />
+              <span className="text-sm font-medium">View Mode</span>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Dashboard Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dashboardCards.map((card, index) => {
-            const IconComponent = card.icon;
-            return (
-              <Card 
-                key={index} 
-                className="dashboard-card hover-lift animate-fade-in-up cursor-pointer group transition-all duration-300 hover:shadow-2xl"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardHeader className="pb-3">
-                  <div className={`w-12 h-12 ${card.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                    <IconComponent className={`h-6 w-6 ${card.color}`} />
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-primary transition-colors duration-300">{card.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground">{card.description}</p>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm">{card.content}</p>
-                </CardContent>
-              </Card>
-            );
-          })}
+            <div className="flex items-center gap-2">
+              <Building2 className="h-4 w-4 text-green-600" />
+              <span className="text-sm">My Department</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-purple-600" />
+              <span className="text-sm">Trends</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <RefreshCw className="h-4 w-4" />
+              <span className="text-xs">Last sync: {lastSync}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Analytics & Trends Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Weekly Progress Trends */}
-          <Card className="dashboard-card hover-lift animate-fade-in-up">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LineChartIcon className="h-5 w-5 text-blue-600" />
-                Weekly Progress Trends
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  progress: {
-                    label: "Progress",
-                    color: "hsl(var(--chart-1))",
-                  },
-                  tasks: {
-                    label: "Tasks",
-                    color: "hsl(var(--chart-2))",
-                  },
-                }}
-                className="h-[250px]"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={weeklyProgress}>
-                    <XAxis dataKey="day" />
-                    <YAxis />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Area
-                      type="monotone"
-                      dataKey="progress"
-                      stroke="hsl(var(--chart-1))"
-                      fill="hsl(var(--chart-1))"
-                      fillOpacity={0.3}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="tasks"
-                      stroke="hsl(var(--chart-2))"
-                      fill="hsl(var(--chart-2))"
-                      fillOpacity={0.3}
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          {/* Department Efficiency */}
-          <Card className="dashboard-card hover-lift animate-fade-in-up">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PieChartIcon className="h-5 w-5 text-green-600" />
-                Department Efficiency
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  efficiency: {
-                    label: "Efficiency",
-                  },
-                }}
-                className="h-[250px]"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <RechartsPieChart>
-                    <Pie
-                      data={departmentEfficiency}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}%`}
+        {/* Filters and Sort */}
+        <Card className="dashboard-card hover-lift">
+          <CardContent className="pt-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Filters:</span>
+                <div className="flex gap-2">
+                  {['all', 'high', 'inprogress', 'completed'].map((filter) => (
+                    <Button
+                      key={filter}
+                      variant={activeFilter === filter ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setActiveFilter(filter)}
+                      className="text-xs"
                     >
-                      {departmentEfficiency.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Monthly Performance Analytics */}
-        <Card className="dashboard-card hover-lift animate-fade-in-up">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-purple-600" />
-              Monthly Performance Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChartContainer
-              config={{
-                completed: {
-                  label: "Completed",
-                  color: "hsl(var(--chart-1))",
-                },
-                planned: {
-                  label: "Planned",
-                  color: "hsl(var(--chart-2))",
-                },
-                efficiency: {
-                  label: "Efficiency",
-                  color: "hsl(var(--chart-3))",
-                },
-              }}
-              className="h-[300px]"
-            >
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyTrends}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar dataKey="completed" fill="hsl(var(--chart-1))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="planned" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
-
-        {/* Performance Metrics & Insights */}
-        <Card className="dashboard-card hover-lift animate-fade-in-up">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-red-600" />
-              Performance Metrics & Insights
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {performanceMetrics.map((metric, index) => (
-                <div key={index} className="glass-card p-4 rounded-lg group hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
-                      <Activity className="h-4 w-4 text-primary" />
-                      <span className="font-medium text-sm">{metric.metric}</span>
-                    </div>
-                    <Badge variant="outline" className="text-green-600 bg-green-50">
-                      {metric.trend}
-                    </Badge>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Current</span>
-                      <span className="font-bold">{metric.current}%</span>
-                    </div>
-                    <Progress value={metric.current} className="h-2" />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Target: {metric.target}%</span>
-                      <span className={metric.current >= metric.target ? 'text-green-600' : 'text-orange-600'}>
-                        {metric.current >= metric.target ? '✓ On Track' : '⚠ Below Target'}
-                      </span>
-                    </div>
-                  </div>
+                      {filter === 'all' ? 'All Projects' :
+                       filter === 'high' ? 'High Priority' :
+                       filter === 'inprogress' ? 'In Progress' :
+                       'Completed'}
+                    </Button>
+                  ))}
                 </div>
-              ))}
+              </div>
+              <Button variant="outline" size="sm" className="flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4" />
+                Sort by Priority
+              </Button>
             </div>
           </CardContent>
         </Card>
+
+        {/* Project Progress Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {filteredProjects.map((project) => (
+            <Card key={project.id} className="dashboard-card hover-lift animate-fade-in-up group">
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <CardTitle className="text-lg mb-2">{project.name}</CardTitle>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Users className="h-4 w-4" />
+                      <span>{project.assignedTo}</span>
+                      <span>•</span>
+                      <Building2 className="h-4 w-4" />
+                      <span>{project.department}</span>
+                    </div>
+                  </div>
+                  <Badge className={getPriorityColor(project.priority)}>
+                    {project.priority}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Progress Section */}
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Progress</span>
+                    <span className="text-sm font-bold">{project.progress}%</span>
+                  </div>
+                  <Progress value={project.progress} className="h-3" />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{project.tasksCompleted}/{project.totalTasks} tasks completed</span>
+                    <span className={`flex items-center gap-1 ${getStatusColor(project.status).replace('bg-', 'text-')}`}>
+                      <div className={`w-2 h-2 rounded-full ${getStatusColor(project.status)}`} />
+                      {project.status}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Deadline */}
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Deadline:</span>
+                  <span className="font-medium">{project.deadline}</span>
+                </div>
+
+                {/* Transparency Features */}
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-1 text-xs">
+                    <CheckCircle2 className="h-3 w-3 text-green-600" />
+                    <span>Completed</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs">
+                    <Clock className="h-3 w-3 text-blue-600" />
+                    <span>On Track</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs">
+                    <AlertTriangle className="h-3 w-3 text-yellow-600" />
+                    <span>Monitored</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
         {/* Department Overview */}
         <Card className="dashboard-card hover-lift animate-fade-in-up">
